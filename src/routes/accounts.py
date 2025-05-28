@@ -531,7 +531,7 @@ async def login_user(
         },
     },
 )
-aasync def refresh_access_token(
+async def refresh_access_token(
         token_data: TokenRefreshRequestSchema,
         db: AsyncSession = Depends(get_db),
         jwt_manager: JWTAuthManagerInterface = Depends(get_jwt_auth_manager),
@@ -570,7 +570,6 @@ aasync def refresh_access_token(
             detail=str(error),
         )
 
-    # Проверяем наличие refresh token в базе
     stmt = select(RefreshTokenModel).where(RefreshTokenModel.token == token_data.refresh_token)
     result = await db.execute(stmt)
     refresh_token_record = result.scalars().first()
@@ -580,7 +579,6 @@ aasync def refresh_access_token(
             detail="Refresh token not found.",
         )
 
-    # Проверяем, что пользователь существует
     stmt = select(UserModel).where(UserModel.id == user_id)
     result = await db.execute(stmt)
     user = result.scalars().first()
